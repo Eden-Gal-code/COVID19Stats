@@ -34,6 +34,9 @@ const Application = React.memo(function Application() {
   if (sessionStorage.getItem("selection") === "Country Stats") {
     sessionStorage.removeItem("secondCountryDisplay");
   }
+  if (sessionStorage.getItem("selection") === "Global Stats") {
+    sessionStorage.removeItem("secondCountryDisplay");
+  }
 
   return (
     <React.Fragment>

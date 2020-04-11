@@ -3,6 +3,7 @@ import axios from "axios";
 
 export function useCountry(country) {
   const [dataC, setDataC] = useState(null);
+  // eslint-disable-next-line
   useEffect(() => {
     axios
       .get("https://pomber.github.io/covid19/timeseries.json")
@@ -14,7 +15,7 @@ export function useCountry(country) {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [country]);
   if (country === null) {
     return null;
   }

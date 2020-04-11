@@ -29,6 +29,6 @@ export function useData(country) {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [country]);
   return dataC;
 }
