@@ -20,7 +20,7 @@ const drawerWidth = 190;
 const useStyles = makeStyles((theme) => ({
   root: {
     position: "relative",
-
+    flexGrow: 1,
     display: "flex",
   },
 
