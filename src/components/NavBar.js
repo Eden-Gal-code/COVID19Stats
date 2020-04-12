@@ -19,6 +19,8 @@ const drawerWidth = 190;
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    position: "relative",
+
     display: "flex",
   },
 
@@ -89,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar(props) {
   const classes = useStyles();
   const [selection, setSelection] = useState(null);
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
