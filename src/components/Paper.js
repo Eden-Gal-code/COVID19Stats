@@ -25,7 +25,10 @@ const MyPaper = React.memo((props) => {
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
           {props.title}
         </Typography>
-        <Typography component="p" variant="h5">
+        <Typography
+          component="p"
+          variant={window.innerWidth < 500 ? "h6" : "h4"}
+        >
           {props.number.toLocaleString()}
         </Typography>
         <Typography color="textSecondary" className={classes.depositContext}>

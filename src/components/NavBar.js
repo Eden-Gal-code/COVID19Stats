@@ -69,12 +69,12 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   drawerPaperClose: {
-    overflowX: "hidden",
+    // overflowX: "hidden",
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: 0,
+    width: 1,
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
