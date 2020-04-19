@@ -69,7 +69,17 @@ const Application = React.memo(function Application() {
             <Divider />
           </Grid>
           <Grid item xs={12}>
-            {Data ? <Papers Data={Data} /> : "Loading"}
+            {Data ? (
+              <Papers
+                Data={createCompareData(
+                  Data,
+                  secondCountryData,
+                  sessionStorage.getItem("secondCountryDisplay")
+                )}
+              />
+            ) : (
+              "Loading"
+            )}
           </Grid>
         </Grid>
         <br />
@@ -88,9 +98,15 @@ const Application = React.memo(function Application() {
           <Grid item xs={12} md={6} lg={4}>
             {Data ? (
               <RegularGraph
-                Data={createCompareData(Data, secondCountryData)}
+                Data={createCompareData(
+                  Data,
+                  secondCountryData,
+                  sessionStorage.getItem("secondCountryDisplay")
+                )}
                 type="confirmed"
-                Stype="confirmed1"
+                Stype={
+                  sessionStorage.getItem("secondCountryDisplay") + "_confirmed"
+                }
                 label="Total Confirmed"
                 stroke="#FFAE00"
               />
@@ -101,9 +117,15 @@ const Application = React.memo(function Application() {
           <Grid item xs={12} md={6} lg={4}>
             {Data ? (
               <RegularGraph
-                Data={createCompareData(Data, secondCountryData)}
+                Data={createCompareData(
+                  Data,
+                  secondCountryData,
+                  sessionStorage.getItem("secondCountryDisplay")
+                )}
                 type="deaths"
-                Stype="deaths1"
+                Stype={
+                  sessionStorage.getItem("secondCountryDisplay") + "_deaths"
+                }
                 label="Total Deaths"
                 stroke="#FF0000"
               />
@@ -114,9 +136,15 @@ const Application = React.memo(function Application() {
           <Grid item xs={12} md={6} lg={4}>
             {Data ? (
               <RegularGraph
-                Data={createCompareData(Data, secondCountryData)}
+                Data={createCompareData(
+                  Data,
+                  secondCountryData,
+                  sessionStorage.getItem("secondCountryDisplay")
+                )}
                 type="recovered"
-                Stype="recovered1"
+                Stype={
+                  sessionStorage.getItem("secondCountryDisplay") + "_recovered"
+                }
                 label="Total Recovered"
                 stroke="#00FF2A "
               />
@@ -142,10 +170,13 @@ const Application = React.memo(function Application() {
               <RegularGraph
                 Data={createCompareData(
                   DataPerDay(Data),
-                  DataPerDay(secondCountryData)
+                  DataPerDay(secondCountryData),
+                  sessionStorage.getItem("secondCountryDisplay")
                 )}
                 type="confirmed"
-                Stype="confirmed1"
+                Stype={
+                  sessionStorage.getItem("secondCountryDisplay") + "_confirmed"
+                }
                 label="Daily Confirmed"
                 stroke="#FFAE00"
               />
@@ -158,10 +189,13 @@ const Application = React.memo(function Application() {
               <RegularGraph
                 Data={createCompareData(
                   DataPerDay(Data),
-                  DataPerDay(secondCountryData)
+                  DataPerDay(secondCountryData),
+                  sessionStorage.getItem("secondCountryDisplay")
                 )}
                 type="deaths"
-                Stype="deaths1"
+                Stype={
+                  sessionStorage.getItem("secondCountryDisplay") + "_deaths"
+                }
                 label="Daily Deaths"
                 stroke="#FF0000"
               />
@@ -174,10 +208,13 @@ const Application = React.memo(function Application() {
               <RegularGraph
                 Data={createCompareData(
                   DataPerDay(Data),
-                  DataPerDay(secondCountryData)
+                  DataPerDay(secondCountryData),
+                  sessionStorage.getItem("secondCountryDisplay")
                 )}
                 type="recovered"
-                Stype="recovered1"
+                Stype={
+                  sessionStorage.getItem("secondCountryDisplay") + "_recovered"
+                }
                 label="Daily Recovered"
                 stroke="#00FF2A "
               />
