@@ -15,6 +15,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import clsx from "clsx";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Container from "@material-ui/core/Container";
+import { ReactReduxContext } from "react-redux";
 const drawerWidth = 190;
 
 const useStyles = makeStyles((theme) => ({
@@ -100,106 +101,119 @@ export default function NavBar(props) {
   };
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position="absolute"
-        className={clsx(classes.appBar, open && classes.appBarShift)}
-      >
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(
-              classes.menuButton,
-              open && classes.menuButtonHidden
-            )}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.title}
-          >
-            COVID 19 Stats
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <div className={classes.drawerContainer}>
-          <List>
-            {["Global Stats", "Country Stats", "Country Compare"].map(
-              (text, index) => (
-                <ListItem
-                  button
-                  key={text}
-                  onClick={() => {
-                    setSelection(text);
-                    sessionStorage.setItem("selection", text);
-                    if (text === "Global Stats") {
-                      sessionStorage.setItem("countryDisplay", "");
-                      window.location.reload();
-                    }
-                  }}
+    <ReactReduxContext.Consumer>
+      {({ store }) => {
+        return (
+          <div className={classes.root}>
+            <CssBaseline />
+            <AppBar
+              position="absolute"
+              className={clsx(classes.appBar, open && classes.appBarShift)}
+            >
+              <Toolbar className={classes.toolbar}>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  className={clsx(
+                    classes.menuButton,
+                    open && classes.menuButtonHidden
+                  )}
                 >
-                  <ListItemText primary={text} />
-                </ListItem>
-              )
-            )}
-          </List>
-          <Divider />
-          {selection === "Country Stats" && (
-            <List>
-              <ListItem>
-                <CountrySelect
-                  item="countryDisplay"
-                  list={props.list}
-                  reload={true}
-                />
-              </ListItem>
-            </List>
-          )}
-          {selection === "Country Compare" && (
-            <List>
-              <ListItem>
-                <CountrySelect
-                  item="countryDisplay"
-                  list={props.list}
-                  reload={false}
-                />
-              </ListItem>
-              <ListItem>
-                <CountrySelect
-                  item="secondCountryDisplay"
-                  list={props.list}
-                  reload={true}
-                />
-              </ListItem>
-            </List>
-          )}
-        </div>
-      </Drawer>
+                  <MenuIcon />
+                </IconButton>
+                <Typography
+                  component="h1"
+                  variant="h6"
+                  color="inherit"
+                  noWrap
+                  className={classes.title}
+                >
+                  COVID 19 Stats
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Drawer
+              variant="permanent"
+              classes={{
+                paper: clsx(
+                  classes.drawerPaper,
+                  !open && classes.drawerPaperClose
+                ),
+              }}
+              open={open}
+            >
+              <div className={classes.toolbarIcon}>
+                <IconButton onClick={handleDrawerClose}>
+                  <ChevronLeftIcon />
+                </IconButton>
+              </div>
+              <div className={classes.drawerContainer}>
+                <List>
+                  {["Global Stats", "Country Stats", "Country Compare"].map(
+                    (text, index) => (
+                      <ListItem
+                        button
+                        key={text}
+                        onClick={() => {
+                          setSelection(text);
+                          store.dispatch({
+                            type: "Change_Choice",
+                            payload: { choice: text },
+                          });
+                        }}
+                      >
+                        <ListItemText primary={text} />
+                      </ListItem>
+                    )
+                  )}
+                </List>
+                <Divider />
+                {selection === "Country Stats" && (
+                  <List>
+                    <ListItem>
+                      <CountrySelect
+                        item="countryDisplay"
+                        list={props.list}
+                        payload="Select_One_Country"
+                        changeCountry={props.changeCountry}
+                      />
+                    </ListItem>
+                  </List>
+                )}
+                {selection === "Country Compare" && (
+                  <List>
+                    <ListItem>
+                      <CountrySelect
+                        item="countryDisplay"
+                        list={props.list}
+                        payload="Select_One_Country"
+                        changeCountry={props.changeCountry}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <CountrySelect
+                        item="secondCountryDisplay"
+                        list={props.list}
+                        payload="Add_Country"
+                        changeCountry={props.changeCountry}
+                      />
+                    </ListItem>
+                  </List>
+                )}
+              </div>
+            </Drawer>
 
-      <div className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container className={classes.container}>{props.children}</Container>
-      </div>
-    </div>
+            <div className={classes.content}>
+              <div className={classes.appBarSpacer} />
+              <Container className={classes.container}>
+                {props.children}
+              </Container>
+            </div>
+          </div>
+        );
+      }}
+    </ReactReduxContext.Consumer>
   );
 }

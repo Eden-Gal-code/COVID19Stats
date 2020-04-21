@@ -1,23 +1,32 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function useCountry(country) {
-  const [dataC, setDataC] = useState(null);
+export async function getCountry(country) {
   // eslint-disable-next-line
-  useEffect(() => {
-    axios
-      .get("https://pomber.github.io/covid19/timeseries.json")
-      .then((res) => {
-        if (country !== null) {
-          setDataC(res.data[country]);
+
+  const data = await axios
+    .get("https://pomber.github.io/covid19/timeseries.json")
+    .then((res) => {
+      if (country !== null && country !== undefined && country !== "Global") {
+        return res.data[country];
+      } else {
+        const temp = [];
+        for (let i = 0; i < res.data.Israel.length; i++) {
+          for (const key in res.data) {
+            if (key === "Afghanistan") {
+              temp.push(res.data[key][i]);
+            } else {
+              temp[i].confirmed += res.data[key][i].confirmed;
+              temp[i].deaths += res.data[key][i].deaths;
+              temp[i].recovered += res.data[key][i].recovered;
+            }
+          }
         }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, [country]);
-  if (country === null) {
-    return null;
-  }
-  return dataC;
+        return temp;
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  return data;
 }

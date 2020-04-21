@@ -9,7 +9,7 @@ export function useData(country) {
     axios
       .get("https://pomber.github.io/covid19/timeseries.json")
       .then((res) => {
-        if (country) {
+        if (country !== undefined && country !== "Global") {
           setDataC(res.data[country]);
         } else {
           for (let i = 0; i < res.data.Israel.length; i++) {
