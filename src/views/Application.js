@@ -1,14 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import {
-  useCountryList,
-  useData,
-  DataPerDay,
-  useCountry,
-  createCompareData,
-} from "../API";
-import { ReactReduxContext } from "react-redux";
+import { useCountryList, useData, DataPerDay, createCompareData } from "../API";
+
 import NavBar from "../components/NavBar";
 import Papers from "../components/Papers";
 import Divider from "@material-ui/core/Divider";
@@ -29,12 +23,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 //Reducer
 function reducer(state, action) {
-  let obj;
+  let obj = {};
   switch (action.type) {
     case "Select_One_Country":
-      console.log(state);
-      obj = action.payload;
+      obj.countries = action.payload.countries;
+      obj.countryData = action.payload.countryData;
       obj.choice = state.choice;
+      obj.compareDataReg = createCompareData(
+        [],
+        obj.countryData[0],
+        obj.countries[0]
+      );
+      obj.compareDataDay = createCompareData(
+        [],
+        DataPerDay(obj.countryData[0]),
+        obj.countries[0]
+      );
       return obj;
     case "Change_Choice":
       obj = action.payload;
@@ -43,9 +47,34 @@ function reducer(state, action) {
       return obj;
     case "Add_Country":
       obj = state;
-      obj.countries.push(action.payload.countries[0]);
-      obj.countryData.push(action.payload.countryData[0]);
+      obj.countries[action.payload.indexOfData] = action.payload.countries[0];
+      obj.countryData[action.payload.indexOfData] =
+        action.payload.countryData[0];
+
+      obj.compareDataReg = createCompareData(
+        state.compareDataReg,
+        action.payload.countryData[0],
+        action.payload.countries[0]
+      );
+      obj.compareDataDay = createCompareData(
+        state.compareDataDay,
+        DataPerDay(action.payload.countryData[0]),
+        action.payload.countries[0]
+      );
       return obj;
+    case "Remove_Country":
+      let obj1 = {};
+
+      obj1.countries = state.countries;
+      obj1.countries.pop();
+      obj1.countryData = state.countryData;
+      obj1.countryData.pop();
+      obj1.compareDataDay = state.compareDataDay;
+      obj1.compareDataReg = state.compareDataReg;
+      obj1.choice = state.choice;
+
+      return obj1;
+
     default:
       return state;
   }
@@ -64,8 +93,6 @@ const Application = function Application() {
 
   const CountryList = useCountryList();
 
-  console.log(store.getState());
-
   return (
     <React.Fragment>
       <Provider store={store}>
@@ -77,7 +104,7 @@ const Application = function Application() {
             </Grid>
             <Grid item xs={12}>
               {store.getState().countryData[0] ? (
-                <Papers Data={store.getState().countryData[0]} />
+                <Papers Data={store.getState().countryData} />
               ) : (
                 "Loading"
               )}

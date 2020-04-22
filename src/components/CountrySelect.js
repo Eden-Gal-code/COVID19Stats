@@ -33,14 +33,18 @@ const CountrySelect = React.memo((props) => {
               value={country}
               onChange={(event) => {
                 setCountry(event.target.value);
-                console.log(store.getState());
+
                 let obj = {};
                 obj["countries"] = [event.target.value];
-                obj["countryData"] = [getCountry(event.target.value)];
-                store.dispatch({
-                  type: props.payload,
-                  payload: obj,
+                obj["indexOfData"] = props.id;
+                getCountry(event.target.value).then((arr) => {
+                  obj["countryData"] = [arr];
+                  store.dispatch({
+                    type: props.payload,
+                    payload: obj,
+                  });
                 });
+
                 if (props.reload) {
                   window.location.reload();
                 }

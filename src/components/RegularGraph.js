@@ -85,7 +85,12 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "200",
   },
 }));
-const RegularGraph = React.memo(function RegularGraph(props) {
+function useForceUpdate() {
+  const [value, setValue] = useState(0); // integer state
+  return () => setValue((value) => ++value); // update the state to force render
+}
+
+const RegularGraph = function RegularGraph(props) {
   const [data, setData] = useState(
     createCompareData(
       [],
@@ -93,36 +98,48 @@ const RegularGraph = React.memo(function RegularGraph(props) {
       "Global"
     )
   );
-
+  const [countries, setCountries] = useState(["Global"]);
+  const forceUpdate = useForceUpdate();
   const classes = useStyles();
   return (
     <ReactReduxContext.Consumer>
       {({ store }) => {
         store.subscribe(() => {
-          let temp = [];
-          if (Array.isArray(store.getState().countryData[0])) {
-            let arr = store.getState().countryData;
+          setCountries(store.getState().countries);
 
-            for (let i = 0; i < arr.length; i++) {
-              temp = createCompareData(
-                temp,
-                props.daily ? DataPerDay(arr[i]) : arr[i],
-                store.getState().countries[i]
-              );
-            }
-            setData(temp);
-          } else {
-            for (let i = 0; i < store.getState().countryData.length; i++) {
-              store.getState().countryData[i].then((arr) => {
+          let temp = [];
+          if (store.getState().countries.length === 1) {
+            if (Array.isArray(store.getState().countryData[0])) {
+              let arr = store.getState().countryData;
+
+              for (let i = 0; i < arr.length; i++) {
                 temp = createCompareData(
                   temp,
-                  props.daily ? DataPerDay(arr) : arr,
+                  props.daily ? DataPerDay(arr[i]) : arr[i],
                   store.getState().countries[i]
                 );
+              }
+              setData(temp);
+            } else {
+              for (let i = 0; i < store.getState().countryData.length; i++) {
+                store.getState().countryData[i].then((arr) => {
+                  temp = createCompareData(
+                    temp,
+                    props.daily ? DataPerDay(arr) : arr,
+                    store.getState().countries[i]
+                  );
 
-                setData(temp);
-              });
+                  setData(temp);
+                });
+              }
             }
+          } else {
+            setData(
+              props.daily
+                ? store.getState().compareDataDay
+                : store.getState().compareDataReg
+            );
+            forceUpdate();
           }
         });
 
@@ -147,12 +164,12 @@ const RegularGraph = React.memo(function RegularGraph(props) {
                 <Tooltip />
                 <Legend />
 
-                {store.getState().countries.map((country, index) => {
+                {countries.map((country, index) => {
                   return (
                     <Line
                       type="monotone"
                       dataKey={country + "_" + props.type}
-                      stroke={colorArray[index]}
+                      stroke={colorArray[index + 6]}
                       dot={false}
                       strokeWidth={3}
                       name={country}
@@ -166,5 +183,5 @@ const RegularGraph = React.memo(function RegularGraph(props) {
       }}
     </ReactReduxContext.Consumer>
   );
-});
+};
 export default RegularGraph;

@@ -16,6 +16,9 @@ import clsx from "clsx";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Container from "@material-ui/core/Container";
 import { ReactReduxContext } from "react-redux";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import { getCountry } from "../API";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 const drawerWidth = 190;
 
 const useStyles = makeStyles((theme) => ({
@@ -93,6 +96,7 @@ export default function NavBar(props) {
   const classes = useStyles();
   const [selection, setSelection] = useState(null);
   const [open, setOpen] = React.useState(false);
+  const [indexN, setIndexN] = useState(1);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -162,6 +166,17 @@ export default function NavBar(props) {
                             type: "Change_Choice",
                             payload: { choice: text },
                           });
+                          if (text === "Global Stats") {
+                            getCountry("Global").then((arr) => {
+                              store.dispatch({
+                                type: "Select_One_Country",
+                                payload: {
+                                  countries: ["Global"],
+                                  countryData: [arr],
+                                },
+                              });
+                            });
+                          }
                         }}
                       >
                         <ListItemText primary={text} />
@@ -189,7 +204,7 @@ export default function NavBar(props) {
                         item="countryDisplay"
                         list={props.list}
                         payload="Select_One_Country"
-                        changeCountry={props.changeCountry}
+                        id={0}
                       />
                     </ListItem>
                     <ListItem>
@@ -197,9 +212,66 @@ export default function NavBar(props) {
                         item="secondCountryDisplay"
                         list={props.list}
                         payload="Add_Country"
-                        changeCountry={props.changeCountry}
+                        id={1}
                       />
                     </ListItem>
+                    {indexN >= 2 && (
+                      <ListItem>
+                        <CountrySelect
+                          item="secondCountryDisplay"
+                          list={props.list}
+                          payload="Add_Country"
+                          id={2}
+                        />
+                      </ListItem>
+                    )}
+                    {indexN >= 3 && (
+                      <ListItem>
+                        <CountrySelect
+                          item="secondCountryDisplay"
+                          list={props.list}
+                          payload="Add_Country"
+                          id={3}
+                        />
+                      </ListItem>
+                    )}
+                    {indexN >= 4 && (
+                      <ListItem>
+                        <CountrySelect
+                          item="secondCountryDisplay"
+                          list={props.list}
+                          payload="Add_Country"
+                          id={4}
+                        />
+                      </ListItem>
+                    )}
+                    {indexN < 4 && (
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          setIndexN(indexN + 1);
+                        }}
+                      >
+                        <AddCircleIcon />
+                      </IconButton>
+                    )}
+
+                    {indexN > 1 && (
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          if (
+                            indexN ===
+                            store.getState().countries.length - 1
+                          ) {
+                            store.dispatch({ type: "Remove_Country" });
+                          }
+                          setIndexN(indexN - 1);
+                        }}
+                      >
+                        <RemoveCircleIcon />
+                      </IconButton>
+                    )}
                   </List>
                 )}
               </div>
